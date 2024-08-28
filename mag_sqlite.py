@@ -23,69 +23,68 @@ def execute_query(connection, query):
 
 connection = create_connection("test.db")
 
-create_statements_table = """
-CREATE TABLE IF NOT EXISTS statements(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    robinson_id INTEGER,
-    synopsis VARCHAR (150)
-);
-"""
+NAME_TO_QUERY = {
+    "create statements table" : """
+    CREATE TABLE IF NOT EXISTS statements(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        robinson_id INTEGER,
+        synopsis VARCHAR (150)
+    );
+    """,
+    "create_objects_table" : """
+    CREATE TABLE IF NOT EXISTS objects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description VARCHAR (150)
+    );
+    """,
+    "create_character_table" : """
+    CREATE TABLE IF NOT EXISTS characters (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description VARCHAR (150)
+    );
+    """,
+    "create_location_table" : """
+    CREATE TABLE IF NOT EXISTS locations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name VARCHAR (100)
+    );
+    """,
+    "create_org_table" : """
+    CREATE TABLE IF NOT EXISTS organisations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name VARCHAR (100),
+        locus INT NOT NULL,
+        FOREIGN KEY (locus) REFERENCES locations(id)
+    );
+    """,
+    "create_stat_char_table" : """
+    CREATE TABLE IF NOT EXISTS group_to_members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        statement_id INT NOT NULL,
+        character_id INT NOT NULL,
+        FOREIGN KEY (statement_id) REFERENCES statements(id),
+        FOREIGN KEY (character_id) REFERENCES characters(id)
+    );
+    """,
+    "create_org_char_table" : """
+    CREATE TABLE IF NOT EXISTS group_to_members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_id INT,
+        character_id INT,
+        FOREIGN KEY (group_id) REFERENCES organisations(id),
+        FOREIGN KEY (character_id) REFERENCES characters(id)
+    );
+    """
+}
 
-create_object_table = """
-CREATE TABLE IF NOT EXISTS objects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description VARCHAR (150)
-);
-"""
+for query in NAME_TO_QUERY.values():
+    execute_query (connection, query)
 
-create_character_table = """
-CREATE TABLE IF NOT EXISTS characters (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description VARCHAR (150)
-);
-"""
-
-create_location_table = """
-CREATE TABLE IF NOT EXISTS locations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR (100)
-);
-"""
-
-create_organisation_table = """
-CREATE TABLE IF NOT EXISTS organisations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR (100),
-    locus INT NOT NULL,
-    FOREIGN KEY (locus) REFERENCES locations(id)
-);
-"""
-
-create_stat_char_table = """
-CREATE TABLE IF NOT EXISTS group_to_members (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    statement_id INT NOT NULL,
-    character_id INT NOT NULL,
-    FOREIGN KEY (statement_id) REFERENCES statements(id),
-    FOREIGN KEY (character_id) REFERENCES characters(id)
-);
-"""
-
-create_org_char_table = """
-CREATE TABLE IF NOT EXISTS group_to_members (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    group_id INT,
-    character_id INT,
-    FOREIGN KEY (group_id) REFERENCES organisations(id),
-    FOREIGN KEY (character_id) REFERENCES characters(id)
-);
-"""
-
-execute_query (connection, create_statements_table)
-execute_query (connection, create_object_table)
-execute_query (connection, create_character_table)
-execute_query (connection, create_location_table)
-execute_query (connection, create_organisation_table)
-execute_query (connection, create_stat_char_table)
-execute_query (connection, create_org_char_table)
+# execute_query (connection, create_statements_table)
+# execute_query (connection, create_object_table)
+# execute_query (connection, create_character_table)
+# execute_query (connection, create_location_table)
+# execute_query (connection, create_organisation_table)
+# execute_query (connection, create_stat_char_table)
+# execute_query (connection, create_org_char_table)
 
