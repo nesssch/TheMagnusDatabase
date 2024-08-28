@@ -24,10 +24,47 @@ def execute_query(connection, query):
 connection = create_connection("test.db")
 
 create_statements_table = """
-CREATE TABLE statements(
+CREATE TABLE IF NOT EXISTS statements(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     robinson_id INTEGER,
-    synopsis STRING
+    synopsis VARCHAR (150)
 );
 """
+
+create_object_table = """
+CREATE TABLE IF NOT EXISTS objects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description VARCHAR (150)
+);
+"""
+
+create_character_table = """
+CREATE TABLE IF NOT EXISTS characters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description VARCHAR (150)
+);
+"""
+
+create_organisation_table = """
+CREATE TABLE IF NOT EXISTS organisations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR (100),
+    locus VARCHAR (100)
+);
+"""
+
+create_org_char_table = """
+CREATE TABLE IF NOT EXISTS group_to_members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER,
+    character_id INTEGER,
+    FOREIGN KEY group_id REFERENCES organisations(id),
+    FOREIGN KEY character_id REFERENCES characters(id)
+);
+"""
+
 execute_query (connection, create_statements_table)
+execute_query (connection, create_object_table)
+execute_query (connection, create_character_table)
+execute_query (connection, create_organisation_table)
+execute_query (connection, create_org_char_table)
