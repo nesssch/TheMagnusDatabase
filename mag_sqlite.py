@@ -45,26 +45,47 @@ CREATE TABLE IF NOT EXISTS characters (
 );
 """
 
+create_location_table = """
+CREATE TABLE IF NOT EXISTS locations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR (100)
+);
+"""
+
 create_organisation_table = """
 CREATE TABLE IF NOT EXISTS organisations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR (100),
-    locus VARCHAR (100)
+    locus INT NOT NULL,
+    FOREIGN KEY (locus) REFERENCES locations(id)
+);
+"""
+
+create_stat_char_table = """
+CREATE TABLE IF NOT EXISTS group_to_members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    statement_id INT NOT NULL,
+    character_id INT NOT NULL,
+    FOREIGN KEY (statement_id) REFERENCES statements(id),
+    FOREIGN KEY (character_id) REFERENCES characters(id)
 );
 """
 
 create_org_char_table = """
 CREATE TABLE IF NOT EXISTS group_to_members (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    group_id INTEGER,
-    character_id INTEGER,
-    FOREIGN KEY group_id REFERENCES organisations(id),
-    FOREIGN KEY character_id REFERENCES characters(id)
+    group_id INT,
+    character_id INT,
+    FOREIGN KEY (group_id) REFERENCES organisations(id),
+    FOREIGN KEY (character_id) REFERENCES characters(id)
 );
 """
 
 execute_query (connection, create_statements_table)
 execute_query (connection, create_object_table)
 execute_query (connection, create_character_table)
+execute_query (connection, create_location_table)
 execute_query (connection, create_organisation_table)
+execute_query (connection, create_stat_char_table)
 execute_query (connection, create_org_char_table)
+
