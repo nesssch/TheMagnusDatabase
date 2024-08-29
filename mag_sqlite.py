@@ -34,13 +34,8 @@ NAME_TO_QUERY = {
     CREATE TABLE IF NOT EXISTS statements(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         robinson_id INTEGER,
+        date_given DATE,
         synopsis VARCHAR (150)
-    );
-    """,
-    "create_objects_table" : """
-    CREATE TABLE IF NOT EXISTS objects (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        description VARCHAR (150)
     );
     """,
     "create_character_table" : """
@@ -55,11 +50,12 @@ NAME_TO_QUERY = {
         name VARCHAR (100)
     );
     """,
-    "create_event_table" : """
-    CREATE TABLE IF NOT EXISTS events (
+    "create_objects_table" : """
+    CREATE TABLE IF NOT EXISTS objects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         description VARCHAR (150),
-        date DATE
+        eff_id INT NOT NULL,
+        FOREIGN KEY (eff_id) REFERENCES effects(id)
     );
     """,
     "create_org_table" : """
@@ -70,12 +66,27 @@ NAME_TO_QUERY = {
         FOREIGN KEY (locus) REFERENCES locations(id)
     );
     """,
-    "create_stat_char_table": many_to_many("statements_to_characters", "statements", "characters")
+    "create_effect_table" : """
+    CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description VARCHAR (150),
+    );
+    """,
+    "create_stat_chr_table": many_to_many("stat_to_chr", "statements", "characters"),
+    "create_stat_obj_table": many_to_many("stat_to_obj", "statements", "objects"),
+    "create_stat_loc_table": many_to_many("stat_to_loc", "statements", "locations"),
+    "create_stat_eff_table": many_to_many("stat_to_eff", "statements", "effects"),
+    "create_stat_org_table": many_to_many("stat_to_org", "statements", "organisations"),
+    "create_char_eff_table": many_to_many("char_to_eff", "characters", "effects"),
+    "create_char_obj_table": many_to_many("char_to_obj", "characters", "objects"),
+    "create_char_org_table": many_to_many("char_to_org", "characters", "organisations"),
+    "create_obj_chr_table": many_to_many("obj_to_chr", "objects", "characters"),
+    "create_obj_org_table": many_to_many("obj_to_org", "objects", "organisations"),
+    "create_org_loc_table": many_to_many("org_to_loc", "organisations", "locations"),
+    "create_org_eff_table": many_to_many("org_to_eff", "organisations", "effects")
 }
 
-print(many_to_many("org_to_char", "organisations", "characters"))
+# print(many_to_many("org_to_char", "organisations", "characters"))
 
 for query in NAME_TO_QUERY.values():
     execute_query (connection, query)
-
-
