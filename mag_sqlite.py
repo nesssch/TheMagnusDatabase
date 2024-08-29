@@ -20,6 +20,14 @@ def execute_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
 
+def many_to_many(name, table1, table2):
+    return ('CREATE TABLE IF NOT EXISTS', name, '('
+        'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+        + table1 + '_id INT NOT NULL,'
+        + table2 + '_id INT NOT NULL,'
+        'FOREIGN KEY (' + table1 + '_id REFERENCES ' + table1 + '(id),'
+        'FOREIGN KEY (' + table2 + '_id REFERENCES ' + table2 + '(id),'
+    ');')
 
 connection = create_connection("test.db")
 
@@ -49,6 +57,13 @@ NAME_TO_QUERY = {
         name VARCHAR (100)
     );
     """,
+    "create_event_table" : """
+    CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description VARCHAR (150),
+        date DATE
+    );
+    """,
     "create_org_table" : """
     CREATE TABLE IF NOT EXISTS organisations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,34 +72,10 @@ NAME_TO_QUERY = {
         FOREIGN KEY (locus) REFERENCES locations(id)
     );
     """,
-    "create_stat_char_table" : """
-    CREATE TABLE IF NOT EXISTS group_to_members (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        statement_id INT NOT NULL,
-        character_id INT NOT NULL,
-        FOREIGN KEY (statement_id) REFERENCES statements(id),
-        FOREIGN KEY (character_id) REFERENCES characters(id)
-    );
-    """,
-    "create_org_char_table" : """
-    CREATE TABLE IF NOT EXISTS group_to_members (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_id INT,
-        character_id INT,
-        FOREIGN KEY (group_id) REFERENCES organisations(id),
-        FOREIGN KEY (character_id) REFERENCES characters(id)
-    );
-    """
+    "create_stat_char_table": many_to_many("statements_to_characters", "statements", "characters")
 }
 
 for query in NAME_TO_QUERY.values():
     execute_query (connection, query)
 
-# execute_query (connection, create_statements_table)
-# execute_query (connection, create_object_table)
-# execute_query (connection, create_character_table)
-# execute_query (connection, create_location_table)
-# execute_query (connection, create_organisation_table)
-# execute_query (connection, create_stat_char_table)
-# execute_query (connection, create_org_char_table)
-
+# print(m2m("org_to_char", "organisations", "characters"))
