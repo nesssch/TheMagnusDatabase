@@ -30,12 +30,13 @@ def many_to_many(name, table1, table2):
 connection = create_connection("test.db")
 
 NAME_TO_QUERY = {
-    "create statements table" : """
+    "create_statements_table" : """
     CREATE TABLE IF NOT EXISTS statements(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         robinson_id INTEGER,
         date_given DATE,
-        synopsis VARCHAR (150)
+        synopsis VARCHAR (150),
+        UNIQUE (synopsis)
     );
     """,
     "create_character_table" : """
@@ -69,7 +70,7 @@ NAME_TO_QUERY = {
     "create_effect_table" : """
     CREATE TABLE IF NOT EXISTS events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        description VARCHAR (150),
+        description VARCHAR (150)
     );
     """,
     "create_stat_chr_table": many_to_many("stat_to_chr", "statements", "characters"),
@@ -88,5 +89,16 @@ NAME_TO_QUERY = {
 
 # print(many_to_many("org_to_char", "organisations", "characters"))
 
-for query in NAME_TO_QUERY.values():
+TEST_INSERTS = {
+    "mag 1": """INSERT INTO statements (robinson_id, synopsis)
+                VALUES (069420, "Jon sneezes");
+    """,
+}
+
+# for query in NAME_TO_QUERY.values():
+#     execute_query (connection, query)
+
+print("Inserting values")
+
+for query in TEST_INSERTS.values():
     execute_query (connection, query)
