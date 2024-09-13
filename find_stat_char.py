@@ -1,7 +1,9 @@
 f = open("stat_char.txt", "r", encoding="utf8")
 
 def format_line(line:str):
-    return
+    line = line.lstrip()
+    comma = line.find(",")
+    return line[:comma]
 
 def get_ep_1():
     test_arr = []
@@ -9,9 +11,9 @@ def get_ep_1():
     count = 0
     while curr != "Episode 2\n":
         if curr[:2] != "Ep" and curr != "\n":
-            print (curr)
+            #print (curr)
             count += 1
-            test_arr.append(curr)
+            test_arr.append(format_line(curr))
         curr = f.readline()
     return test_arr
 
